@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Avaliação - Joelho</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Biblioteca para Gerar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #00A6A6;
+            --primary-dark: #006D77;
+            --primary-light: #E0F7F7;
+            --bg-light: #F8FAFB;
+            --white: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-light: #6B7280;
+            --secondary: #2D3436;
+            --border: #E0E0E0;
+            --alert: #d63031;
+            --alert-bg: #FEF3C7;
+            --alert-text: #92400E;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+            --gradient: linear-gradient(135deg, #00A6A6 0%, #006D77 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            background: linear-gradient(180deg, #F8FAFB 0%, #E8F4F5 100%);
+            color: var(--text-dark);
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 50px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            border: 1px solid rgba(0, 166, 166, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 15px 35px rgba(0, 166, 166, 0.15);
+        }
+
+        /* Botões de Ação */
+        .actions-bar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0, 166, 166, 0.2);
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 166, 166, 0.3);
+            background: linear-gradient(135deg, #00B8B8 0%, #007A85 100%);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #636E72 0%, #2D3436 100%);
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #2D3436 0%, #1A1A1A 100%);
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo-text h1 {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin: 0;
+            line-height: 1;
+        }
+        .header-logo-text span {
+            color: var(--primary);
+        }
+        .header-logo-text p {
+            margin: 5px 0 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .header-date {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Sections */
+        h2 {
+            color: var(--primary-dark);
+            font-size: 1.75rem;
+            margin: 50px 0 30px 0;
+            padding-bottom: 16px;
+            border-bottom: 3px solid var(--primary-light);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .patient-info {
+            background: var(--white);
+            padding: 24px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 166, 166, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .info-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .info-group value {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+        
+        .info-group.editable value {
+            color: var(--primary-dark);
+            border-bottom: 1px dashed rgba(0, 166, 166, 0.3);
+            cursor: text;
+        }
+
+        p.text-justify {
+            text-align: justify;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            line-height: 1.8;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            background: var(--white);
+            padding: 1px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 166, 166, 0.1);
+        }
+        th {
+            background: var(--gradient);
+            color: white;
+            font-weight: 700;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+        }
+        td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:hover {
+            background-color: var(--primary-light);
+            transition: background-color 0.2s ease;
+        }
+
+        .diff-positive {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        .diff-negative {
+            color: var(--alert);
+            font-weight: bold;
+        }
+
+        /* Inspection Box */
+        .inspection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .inspection-item {
+            background: var(--white);
+            border: 1px solid rgba(0, 166, 166, 0.1);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .inspection-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(0, 166, 166, 0.3);
+        }
+        
+        .inspection-item strong {
+            display: block;
+            color: var(--primary-dark);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .inspection-item div {
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Guidelines Box */
+        .guidelines-box {
+            background: linear-gradient(135deg, var(--alert-bg) 0%, #FDE68A 100%);
+            border: 1px solid #FCD34D;
+            color: var(--alert-text);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(146, 64, 14, 0.1);
+        }
+        .guidelines-box h3 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: var(--alert-text);
+        }
+        .guidelines-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .guidelines-box li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        /* Signature */
+        .signature-section {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        .signature-line {
+            flex: 1;
+            border-top: 2px solid var(--primary-dark);
+            text-align: center;
+            padding-top: 15px;
+        }
+        .signature-line strong {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+        .crefito {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            display: block;
+            margin-top: 4px;
+        }
+
+        h3 {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            .container {
+                padding: 30px 20px;
+            }
+            .header-logo {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .actions-bar {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 20px;
+                justify-content: flex-end;
+            }
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+            .inspection-grid {
+                grid-template-columns: 1fr;
+            }
+            .signature-section {
+                flex-direction: column;
+                gap: 30px;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media print {
+            body { 
+                background: white; 
+                padding: 0; 
+            }
+            .container { 
+                box-shadow: none; 
+                padding: 0; 
+                margin: 0; 
+                width: 100%; 
+                max-width: 100%; 
+                border: none;
+            }
+            .actions-bar { 
+                display: none !important; 
+            }
+            .info-group.editable value { 
+                border-bottom: none; 
+            }
+            .container:hover {
+                box-shadow: none;
+            }
+            .inspection-item:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            tbody tr:hover {
+                background-color: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="report-content">
+        <!-- Botões de Ação -->
+        <div class="actions-bar" data-html2canvas-ignore="true">
+            <button class="btn-action btn-secondary" onclick="window.print()">
+                🖨️ Imprimir
+            </button>
+            <button class="btn-action" onclick="downloadPDF()">
+                ⬇️ Baixar PDF
+            </button>
+        </div>
+
+        <header>
+            <div class="header-logo">
+                <div class="header-logo-text">
+                    <h1>Clínica <span>Pace</span></h1>
+                    <p>Fisioterapia Esportiva & Reabilitação</p>
+                </div>
+            </div>
+            <div class="header-date">
+                Data: <strong>16/12/2025</strong><br>
+                São Paulo, SP
+            </div>
+        </header>
+
+        <!-- Identificação -->
+        <div class="patient-info">
+            <div class="info-group">
+                <label>Paciente</label>
+                <value>Jonas Pulcheri</value>
+            </div>
+            <div class="info-group">
+                <label>Diagnóstico</label>
+                <value>Gonartrose (Joelho Esquerdo) / PO Artroscopia</value>
+            </div>
+            <div class="info-group">
+                <label>Procedimento</label>
+                <value>Remoção de corpos livres + Infiltração</value>
+            </div>
+            <div class="info-group">
+                <label>Médico</label>
+                <value>Dr. Marco De Mange</value>
+            </div>
+        </div>
+
+        <!-- Histórico e Conduta -->
+        <h2>Resumo Clínico</h2>
+        <p class="text-justify">
+            Paciente em pós-operatório recente de artroscopia de joelho esquerdo para tratamento de gonartrose importante. O procedimento consistiu na remoção de corpos livres intra-articulares e infiltração de aspirado medular associado a ácido hialurônico. 
+        </p>
+        <p class="text-justify">
+            Há planejamento médico para segundo tempo cirúrgico com gordura autóloga microfragmentada em aproximadamente 6 a 8 semanas. O foco atual da reabilitação é o controle do processo inflamatório e manutenção da função muscular sem agredir a superfície articular.
+        </p>
+
+        <!-- Inspeção e Palpação (Novo) -->
+        <h2>Exame Físico Específico</h2>
+        <div class="inspection-grid">
+            <div class="inspection-item">
+                <strong>Edema / Derrame</strong>
+                <div>Peripatelar: <b>++/++++</b></div>
+            </div>
+            <div class="inspection-item">
+                <strong>Crepitação Articular</strong>
+                <div>Presente em arco 90°-0°</div>
+                <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">Acentuada a partir de 45° de flexão</div>
+            </div>
+            <div class="inspection-item">
+                <strong>Mobilidade Patelar</strong>
+                <div>2 Quadrantes</div>
+                <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">(Dentro dos padrões de normalidade)</div>
+            </div>
+        </div>
+
+        <!-- Tabelas de Medidas -->
+        <h3 style="margin-bottom: 10px;">Perimetria (Circunferência)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="30%">Referência (Interlinha = 0)</th>
+                        <th width="20%">Direito (cm)</th>
+                        <th width="20%">Esquerdo (cm)</th>
+                        <th width="30%">Diferença (D - E)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>+25 cm</td>
+                        <td>60</td>
+                        <td>55</td>
+                        <td class="diff-positive">+ 5,0 (Atrofia E)</td>
+                    </tr>
+                    <tr>
+                        <td>+20 cm</td>
+                        <td>57</td>
+                        <td>53</td>
+                        <td class="diff-positive">+ 4,0</td>
+                    </tr>
+                    <tr>
+                        <td>+15 cm</td>
+                        <td>53</td>
+                        <td>48</td>
+                        <td class="diff-positive">+ 5,0</td>
+                    </tr>
+                    <tr>
+                        <td>+10 cm</td>
+                        <td>48</td>
+                        <td>42</td>
+                        <td class="diff-positive">+ 6,0</td>
+                    </tr>
+                    <tr>
+                        <td>+5 cm</td>
+                        <td>43</td>
+                        <td>41</td>
+                        <td class="diff-positive">+ 2,0</td>
+                    </tr>
+                    <tr style="background-color: #f0f0f0;">
+                        <td><strong>0 cm (Joelho)</strong></td>
+                        <td><strong>37</strong></td>
+                        <td><strong>39</strong></td>
+                        <td class="diff-negative">- 2,0 (Edema E)</td>
+                    </tr>
+                    <tr>
+                        <td>-5 cm</td>
+                        <td>36</td>
+                        <td>35</td>
+                        <td class="diff-positive">+ 1,0</td>
+                    </tr>
+                    <tr>
+                        <td>-10 cm</td>
+                        <td>35</td>
+                        <td>35</td>
+                        <td>0,0</td>
+                    </tr>
+                    <tr>
+                        <td>-15 cm</td>
+                        <td>39</td>
+                        <td>36,5</td>
+                        <td class="diff-positive">+ 2,5</td>
+                    </tr>
+                    <tr>
+                        <td>-20 cm</td>
+                        <td>39</td>
+                        <td>39</td>
+                        <td>0,0</td>
+                    </tr>
+                    <tr>
+                        <td>-25 cm</td>
+                        <td>32</td>
+                        <td>32</td>
+                        <td>0,0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 style="margin-bottom: 10px;">Goniometria (ADM)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lado</th>
+                        <th>Flexão Ativa</th>
+                        <th>Flexão Passiva</th>
+                        <th>Observação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Direito</strong></td>
+                        <td>145°</td>
+                        <td>150°</td>
+                        <td>ADM Livre</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Esquerdo (Op)</strong></td>
+                        <td style="color: var(--primary-dark); font-weight: bold;">120°</td>
+                        <td>-</td>
+                        <td><em>Passivo não realizado (preservação tecidual)</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Diretrizes -->
+        <div class="guidelines-box">
+            <h3>⚠️ Diretrizes de Reabilitação (Fase Atual)</h3>
+            <ul style="margin-bottom: 0; padding-left: 20px;">
+                <li><strong>Carga:</strong> Liberada conforme tolerância (WBAT).</li>
+                <li><strong>Mobilidade:</strong> Não forçar ganho de flexão final. Evitar alongamentos agressivos.</li>
+                <li><strong>Objetivo:</strong> Reduzir risco de agressão tecidual e exacerbação de sintomas.</li>
+                <li><strong>Exercícios:</strong> Priorizar isometria de quadríceps e estabilizadores.</li>
+            </ul>
+        </div>
+
+        <!-- Assinaturas -->
+        <div class="signature-section">
+            <div class="signature-line">
+                <strong>Vitor Vaz</strong><br>
+                <span class="crefito">Fisioterapeuta - Crefito 3/297100</span><br>
+                <span class="crefito">Clínica Pace</span>
+            </div>
+            <div class="signature-line">
+                <strong>Dr. Marco De Mange</strong><br>
+                <span class="crefito">CRM 100483 | RQE 7254</span><br>
+                <span class="crefito">Médico Responsável</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            const opt = {
+                margin:       [0.5, 0.5],
+                filename:     'Relatorio_Jonas_Pulcheri.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+
+</body>
+</html>
